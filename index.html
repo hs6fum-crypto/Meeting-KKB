@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e2f0e5">
+  <meta name="description" content="เครื่องมือสร้าง ตรวจทาน และจัดเก็บรายงานการประชุม กกบ. โรงพยาบาลพรหมพิราม">
+  <title>กกบ. Minutes | โรงพยาบาลพรหมพิราม</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><span>+</span></div>
+        <div><strong>กกบ. Minutes</strong><small>PHROMPHIRAM HOSPITAL</small></div>
+      </div>
+      <div class="side-caption">เมนูทำงาน</div>
+      <nav class="side-nav" aria-label="เมนูหลัก">
+        <a class="nav-link active" href="#top"><span class="nav-icon">⌂</span> เริ่มต้น</a>
+        <a class="nav-link" href="#source"><span class="nav-icon">＋</span> เพิ่มไฟล์</a>
+        <a class="nav-link" href="#formCard"><span class="nav-icon">✎</span> แก้ไขรายงาน</a>
+        <a class="nav-link" href="#history"><span class="nav-icon">▤</span> รายงานที่บันทึก</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="privacy-chip"><span class="privacy-dot"></span><span>จัดเก็บในอุปกรณ์นี้</span></div>
+        <small>ตรวจทานรายงานก่อนนำส่งรับรอง</small>
+      </div>
+    </aside>
+
+    <main class="main-content" id="top">
+      <header class="topbar">
+        <div class="breadcrumb">โรงพยาบาลพรหมพิราม <span>/</span> งานเลขานุการ กกบ.</div>
+        <div class="topbar-right">
+          <span class="autosave" id="saveStatus"><i></i> บันทึกในอุปกรณ์นี้</span>
+          <button class="button button-outline button-small" id="newReportBtn" type="button">＋ เริ่มรายงานใหม่</button>
+        </div>
+      </header>
+
+      <section class="page-heading welcome-banner">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> เครื่องมือจัดทำรายงานการประชุม</div>
+          <h1>รายงานการประชุม <em>กกบ.</em></h1>
+          <p>โรงพยาบาลพรหมพิราม จังหวัดพิษณุโลก · เพิ่มไฟล์ ตรวจทาน แล้วดาวน์โหลดรายงาน</p>
+        </div>
+        <div class="heading-date">
+          <span class="date-icon">▤</span>
+          <span><small>รายงานในอุปกรณ์นี้</small><strong id="documentCount">0 ฉบับ</strong></span>
+        </div>
+      </section>
+
+      <nav class="workflow-strip" aria-label="ขั้นตอนทำรายงาน">
+        <a class="workflow-step current" href="#source"><span class="step-number">1</span><span>เพิ่มไฟล์</span></a>
+        <span class="step-rule" aria-hidden="true"></span>
+        <a class="workflow-step" href="#formCard"><span class="step-number">2</span><span>กรอกและตรวจทาน</span></a>
+        <span class="step-rule" aria-hidden="true"></span>
+        <a class="workflow-step" href="#previewSection"><span class="step-number">3</span><span>ดูตัวอย่าง</span></a>
+        <span class="step-rule" aria-hidden="true"></span>
+        <a class="workflow-step" href="#exportCard"><span class="step-number">4</span><span>ดาวน์โหลด</span></a>
+      </nav>
+
+      <section class="import-card" id="source" aria-labelledby="sourceTitle">
+        <div class="import-heading">
+          <div class="section-label">
+            <span class="section-index">01</span>
+            <div><h2 id="sourceTitle">เริ่มจากไฟล์หรือกรอกข้อมูลเอง</h2><p>เลือกไฟล์เสียง เอกสาร ตาราง หรือภาพ เพื่อช่วยเติมข้อมูลรายงาน</p></div>
+          </div>
+          <span class="local-badge"><span>●</span> ประมวลผลบนอุปกรณ์</span>
+        </div>
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="เลือกไฟล์จากอุปกรณ์หรือลากไฟล์มาวาง">
+          <input id="fileInput" type="file" multiple hidden>
+          <div class="upload-glyph"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14.5v4A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-4"/></svg></div>
+          <div class="drop-copy"><strong>วางไฟล์ในกรอบนี้</strong><span>หรือ <button type="button" class="text-button" id="browseBtn">เลือกไฟล์จากอุปกรณ์</button></span></div>
+          <div class="file-types"><span>เสียง: MP3 · M4A · WAV</span><span>เอกสาร: PDF · DOCX · XLSX · XLS</span><span>ภาพ: JPG · PNG</span></div>
+        </div>
+        <div class="import-footer"><span>เลือกได้หลายไฟล์ · ไฟล์ต้นฉบับไม่ถูกอัปโหลดออกจากเครื่อง</span><span id="importSummary">ยังไม่มีไฟล์</span></div>
+        <p class="audio-import-note">ไฟล์ภาพหรือ PDF สแกนให้กด “อ่าน OCR” หลังเพิ่มไฟล์ ส่วนการถอดเสียง Whisper.cpp ต้องเปิดแอปบนเครื่องผ่าน start-app.bat ก่อน</p>
+        <div class="transcription-settings">
+          <label class="field" for="transcriptionMode"><span>โหมดถอดเสียง</span>
+            <select id="transcriptionMode">
+              <option value="fast" selected>โหมดเร็ว · Whisper Tiny</option>
+              <option value="accurate">โหมดเน้นความแม่นยำ · Typhoon ภาษาไทย</option>
+            </select>
+          </label>
+          <small id="transcriptionModeHint">โหมดเร็วเหมาะกับไฟล์เสียงยาว · โหมดแม่นยำใช้หน่วยความจำและเวลาประมวลผลมากกว่า</small>
+        </div>
+        <div class="file-list" id="fileList" aria-live="polite"></div>
+      </section>
+
+      <div class="section-label form-heading">
+        <span class="section-index">02</span>
+        <div><h2>กรอกและตรวจทานรายงาน</h2><p>ข้อมูลตั้งต้นใส่ไว้ให้แล้ว แก้เฉพาะส่วนที่เปลี่ยนในการประชุมครั้งนี้</p></div>
+      </div>
+
+      <section class="content-grid">
+        <div class="form-card" id="formCard">
+          <details class="edit-group" open>
+            <summary class="edit-group-summary">
+              <span class="section-index">1</span>
+              <span class="edit-group-copy"><strong>ข้อมูลการประชุม</strong><small>ครั้งที่ วันเวลา สถานที่ และผู้รับผิดชอบ</small></span>
+              <span class="edit-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="edit-group-body">
+              <div class="field-grid three-col">
+                <label class="field"><span>ครั้งที่ <b>*</b></span><input id="meetingNo" placeholder="เช่น 12/2569"></label>
+                <label class="field"><span>วันที่ประชุม</span><input id="meetingDate" type="date"><small class="field-hint" id="meetingDateDisplay">เลือกวันที่จากปฏิทิน · รายงานแสดงปี พ.ศ.</small></label>
+                <label class="field"><span>เวลาเริ่ม</span><input id="startTime" type="time" step="60"></label>
+                <label class="field span-2"><span>สถานที่</span><input id="location" placeholder="ห้องประชุม ชั้น ๒ อาคารผู้ป่วยนอก โรงพยาบาลพรหมพิราม"></label>
+                <label class="field"><span>เวลาปิดประชุม</span><input id="endTime" type="time" step="60"></label>
+                <label class="field"><span>ประธานการประชุม</span><input id="chair" placeholder="ชื่อ–สกุล"></label>
+                <label class="field"><span>ผู้บันทึกรายงาน</span><input id="recorder" placeholder="ชื่อ–สกุล"></label>
+                <label class="field"><span>ผู้ตรวจรายงาน</span><input id="reviewer" placeholder="ชื่อ–สกุล"></label>
+                <label class="field span-3"><span>ตำแหน่งประธาน / หน้าที่</span><textarea id="chairPosition" rows="2" placeholder="ตำแหน่งหรือหน้าที่ในการประชุม"></textarea></label>
+                <label class="field"><span>ตำแหน่งผู้บันทึกรายงาน</span><input id="recorderPosition" placeholder="ตำแหน่ง"></label>
+                <label class="field"><span>ตำแหน่งผู้ตรวจรายงาน</span><input id="reviewerPosition" placeholder="ตำแหน่ง"></label>
+              </div>
+            </div>
+          </details>
+
+          <details class="edit-group">
+            <summary class="edit-group-summary">
+              <span class="section-index">2</span>
+              <span class="edit-group-copy"><strong>รายชื่อผู้เข้าร่วมประชุม</strong><small>เพิ่ม แก้ไข หรือลบชื่อและตำแหน่ง</small></span>
+              <span class="edit-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="edit-group-body roster-groups">
+              <div class="field roster-field" role="group" aria-labelledby="attendeesLabel">
+                <div class="roster-heading"><span id="attendeesLabel">ผู้เข้าร่วมประชุม</span><button class="button button-outline button-small" type="button" data-roster-add="attendees">＋ เพิ่มรายชื่อ</button></div>
+                <div class="roster-table-wrap"><table class="roster-edit-table"><thead><tr><th>ลำดับ</th><th>ชื่อ–สกุล</th><th>ตำแหน่ง</th><th></th></tr></thead><tbody id="attendeesRows"></tbody></table></div>
+                <small class="field-hint">ตรวจสอบรายชื่อให้ตรงกับผู้เข้าร่วมประชุมครั้งนี้</small>
+              </div>
+              <div class="field roster-field" role="group" aria-labelledby="absentLabel">
+                <div class="roster-heading"><span id="absentLabel">ผู้ไม่เข้าร่วมประชุม / ลา</span><button class="button button-outline button-small" type="button" data-roster-add="absent">＋ เพิ่มรายชื่อ</button></div>
+                <div class="roster-table-wrap"><table class="roster-edit-table"><thead><tr><th>ลำดับ</th><th>ชื่อ–สกุล</th><th>ตำแหน่ง</th><th></th></tr></thead><tbody id="absentRows"></tbody></table></div>
+              </div>
+              <div class="field roster-field" role="group" aria-labelledby="guestsLabel">
+                <div class="roster-heading"><span id="guestsLabel">ผู้เข้าร่วมประชุมเพิ่มเติม / ผู้ติดตาม</span><button class="button button-outline button-small" type="button" data-roster-add="guests">＋ เพิ่มรายชื่อ</button></div>
+                <div class="roster-table-wrap"><table class="roster-edit-table"><thead><tr><th>ลำดับ</th><th>ชื่อ–สกุล</th><th>ตำแหน่ง</th><th></th></tr></thead><tbody id="guestsRows"></tbody></table></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="edit-group">
+            <summary class="edit-group-summary">
+              <span class="section-index">3</span>
+              <span class="edit-group-copy"><strong>ระเบียบวาระและมติ</strong><small>มี 6 วาระ แยกสรุปเรื่องและมติทีละประเด็น</small></span>
+              <span class="edit-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="edit-group-body">
+              <div class="section-label agenda-heading">
+                <div><h2>เนื้อหาแต่ละวาระ</h2><p>เพิ่มหรือลบประเด็นย่อยได้ ตรวจมติก่อนส่งออก</p></div>
+                <button class="button button-outline button-small" id="organizeTranscriptBtn" type="button">จัดข้อความเข้าวาระ</button>
+              </div>
+              <div class="agenda-list" id="agendaList"></div>
+            </div>
+          </details>
+
+          <details class="edit-group">
+            <summary class="edit-group-summary">
+              <span class="section-index">4</span>
+              <span class="edit-group-copy"><strong>งานติดตามและมอบหมาย</strong><small>เพิ่มเฉพาะงานที่ประชุมมอบหมาย พร้อมผู้รับผิดชอบ</small></span>
+              <span class="edit-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="edit-group-body">
+              <div class="form-section-title action-title"><div><h3>รายการติดตาม / มอบหมายงาน</h3><p>ระบุเรื่อง ผู้รับผิดชอบ และกำหนดเวลา</p></div><button type="button" class="button button-outline button-small" id="addActionBtn">＋ เพิ่มรายการ</button></div>
+              <div class="action-table-wrap"><table class="action-table"><thead><tr><th>เรื่อง / งาน</th><th>ผู้รับผิดชอบ</th><th>กำหนดเวลา</th><th aria-label="ลบรายการ"></th></tr></thead><tbody id="actionRows"></tbody></table><div class="empty-actions" id="emptyActions">ยังไม่มีรายการติดตามงาน</div></div>
+            </div>
+          </details>
+        </div>
+
+        <aside class="right-column">
+          <section class="ai-card">
+            <div class="ai-card-top"><div class="ai-icon">✳</div><span class="ai-label">ช่วยจัดร่าง</span></div>
+            <h3>จัดข้อความจากไฟล์ลงวาระ</h3>
+            <p>อ่านหัวข้อวาระที่พบในข้อความ แล้วเติมลงช่องสรุปเพื่อให้ตรวจแก้ต่อ</p>
+            <div class="local-ai-note">ไม่ต้องใช้ OpenAI API key · ไฟล์และข้อมูลรายงานเก็บในอุปกรณ์นี้</div>
+            <button class="button button-primary generate-btn" id="generateBtn" type="button"><span>✳</span> จัดข้อความลงวาระ</button>
+            <div class="generate-note" id="generateStatus">เพิ่มไฟล์หรือถอดเสียงก่อน แล้วตรวจข้อความ ชื่อบุคคล และมติทุกครั้ง</div>
+          </section>
+
+          <section class="review-card">
+            <div class="review-title"><span class="review-check">✓</span><h3>ตรวจทานก่อนส่งออก</h3></div>
+            <ul><li>ตรวจชื่อและตำแหน่ง</li><li>ตรวจวันที่ ตัวเลข และจำนวนเงิน</li><li>ตรวจมติ ผู้รับผิดชอบ และกำหนดเวลา</li></ul>
+            <div class="draft-stamp"><span></span> รายงานเป็นฉบับร่างจนกว่าจะรับรอง</div>
+          </section>
+
+          <section class="export-card" id="exportCard">
+            <div class="export-top"><div><span class="section-index">04</span><h3>ดาวน์โหลดรายงาน</h3></div><span class="export-ready" id="exportStatus">ฉบับร่าง</span></div>
+            <p>เลือก Word เพื่อแก้ไขต่อ หรือ PDF เพื่อพิมพ์และบันทึก</p>
+            <button class="button export-button" id="downloadDocxBtn" type="button"><span class="file-icon word-icon">W</span><span>ดาวน์โหลด Word <small>.docx</small></span><b>↓</b></button>
+            <button class="button export-button" id="downloadPdfBtn" type="button"><span class="file-icon pdf-icon">P</span><span>พิมพ์ / บันทึก PDF <small>เลือก Save as PDF</small></span><b>↗</b></button>
+          </section>
+        </aside>
+      </section>
+
+      <section class="preview-card" id="previewSection">
+        <div class="preview-header"><div><div class="eyebrow">ตัวอย่างก่อนดาวน์โหลด</div><h2>ตัวอย่างรายงาน</h2></div><span class="preview-note">เปลี่ยนตามข้อมูลที่กรอก</span></div>
+        <div id="reportPreview" class="report-preview"></div>
+      </section>
+
+      <section class="history-section" id="history">
+        <div class="history-heading"><div><div class="eyebrow">บันทึกในอุปกรณ์นี้</div><h2>รายงานที่บันทึกไว้</h2></div><span id="historyCount">0 รายการ</span></div>
+        <div class="history-list" id="historyList"></div>
+        <div class="history-empty" id="historyEmpty"><span class="empty-icon">▤</span><strong>ยังไม่มีรายงานที่บันทึกไว้</strong><p>เริ่มรายงานใหม่และกรอกข้อมูล ระบบจะเก็บฉบับร่างไว้ในอุปกรณ์นี้</p></div>
+      </section>
+
+      <footer class="page-footer"><span>กกบ. Minutes <i>·</i> โรงพยาบาลพรหมพิราม</span><span>ฉบับร่างและประวัติไม่ซิงก์ข้ามอุปกรณ์</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="lib/jszip.min.js"></script>
+  <script src="lib/pdf.min.js"></script>
+  <script src="lib/mammoth.browser.min.js"></script>
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="lib/ocr/tesseract.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
