@@ -1,0 +1,12 @@
+Bundled third-party components
+==============================
+
+@ffmpeg/ffmpeg 0.12.10
+License: MIT
+Source: https://github.com/ffmpegwasm/ffmpeg.wasm
+
+@ffmpeg/core 0.12.10
+License declared by the package: GPL-2.0-or-later
+Source: https://github.com/ffmpegwasm/ffmpeg.wasm
+The bundled WebAssembly core contains FFmpeg and follows the licenses of FFmpeg and
+its enabled libraries. The GPL version 2 text is provided in COPYING-GPL-2.0.txt.
