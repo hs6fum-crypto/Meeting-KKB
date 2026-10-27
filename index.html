@@ -74,7 +74,7 @@
           <div class="file-types"><span>เสียง: MP3 · M4A · WAV</span><span>เอกสาร: PDF · DOCX · XLSX · XLS</span><span>ภาพ: JPG · PNG</span></div>
         </div>
         <div class="import-footer"><span>เลือกได้หลายไฟล์ · ไฟล์ต้นฉบับไม่ถูกอัปโหลดออกจากเครื่อง</span><span id="importSummary">ยังไม่มีไฟล์</span></div>
-        <p class="audio-import-note">การถอดเสียงใช้ Whisper.cpp บนเครื่องของคุณ: เปิด start-app.bat ค้างไว้ก่อน แล้วกดถอดเสียงจากหน้านี้ หาก Chrome ถามเรื่องเครือข่ายในเครื่อง ให้กดอนุญาต</p>
+        <p class="audio-import-note">ถอดเสียงโดยไม่ใช้ API key และไม่ให้ Chrome ขอสิทธิ์: เปิด start-app.bat เพื่อเปิดแอปบนเครื่อง แล้วเลือกไฟล์เสียงในหน้านั้น <a href="http://127.0.0.1:8766/" target="_blank" rel="noopener">เปิดแอปบนเครื่อง</a></p>
         <div class="transcription-settings">
           <label class="field" for="transcriptionMode"><span>โหมดถอดเสียง</span>
             <select id="transcriptionMode">
@@ -214,6 +214,6 @@
   <script src="mammoth.browser.min.js"></script>
   <script src="xlsx.full.min.js"></script>
   <script src="tesseract.min.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=20261027-local-audio"></script>
 </body>
 </html>

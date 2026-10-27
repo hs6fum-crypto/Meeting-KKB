@@ -419,8 +419,16 @@ async function runOcr(id){
   }
 }
 
+function isLocalTranscriptionPage() {
+  return (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
+    && location.port === '8766';
+}
+
 function localTranscriptionUrl(path) {
-  return new URL(path, LOCAL_SERVER_ORIGIN).href;
+  if (!isLocalTranscriptionPage()) {
+    throw new Error('การถอดเสียงต้องเปิดจากแอปบนเครื่อง กรุณาเปิด start-app.bat แล้วเลือกไฟล์เสียงในหน้าแอปบนเครื่อง');
+  }
+  return new URL(path, location.origin + '/').href;
 }
 
 async function ensureLocalTranscriptionService() {
@@ -428,10 +436,9 @@ async function ensureLocalTranscriptionService() {
   try {
     response = await fetch(localTranscriptionUrl('/api/health'), {
       cache: 'no-store',
-      targetAddressSpace: 'local'
     });
   } catch {
-    throw new Error('เชื่อมต่อบริการถอดเสียงในเครื่องไม่ได้ กรุณาเปิด start-app.bat ค้างไว้ และเมื่อ Chrome ถามให้อนุญาตการเข้าถึงเครือข่ายในเครื่อง จากนั้นกดถอดเสียงอีกครั้ง');
+    throw new Error('เชื่อมต่อ Whisper ในเครื่องไม่ได้ กรุณาเปิด start-app.bat แล้วใช้หน้าแอปบนเครื่องที่ http://127.0.0.1:8766/');
   }
   if (!response.ok) {
     throw new Error('บริการถอดเสียงในเครื่องตอบกลับผิดพลาด (' + response.status + ') กรุณาปิดแล้วเปิด start-app.bat ใหม่');
@@ -554,7 +561,7 @@ async function transcribeChunkLocally(bytes,entry,part,total) {
   const mode=entry.transcriptionMode||selectedTranscriptionMode();
   entry.status='กำลังถอดเสียง '+(mode==='fast'?'โหมดเร็ว':'โหมดแม่นยำ')+' ช่วง '+part+'/'+total+' · Whisper.cpp CPU…';
   drawFiles();
-  const response=await fetch(localTranscriptionUrl('/api/transcribe-local'),{method:'POST',headers:{'Content-Type':'audio/wav','X-Transcription-Model':mode},body:bytes,targetAddressSpace:'local'});
+  const response=await fetch(localTranscriptionUrl('/api/transcribe-local'),{method:'POST',headers:{'Content-Type':'audio/wav','X-Transcription-Model':mode},body:bytes});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'ถอดเสียงในเครื่องไม่สำเร็จ');
   entry.transcriptionDevice='cpu';
@@ -613,6 +620,9 @@ async function transcribeFile(id,button) {
   file.error='';
   drawFiles();
   try {
+    if (!isLocalTranscriptionPage()) {
+      throw new Error('หน้านี้ไม่ถอดเสียงโดยเชื่อมต่อข้ามเว็บไซต์ ให้เปิด start-app.bat แล้วเลือกไฟล์เสียงในหน้าแอปบนเครื่อง เพื่อใช้งานโดยไม่ต้องให้ Chrome ขอสิทธิ์');
+    }
     await ensureLocalTranscriptionService();
     const transcript=await queueLocalAudio(file);
     file.kind='transcript';
