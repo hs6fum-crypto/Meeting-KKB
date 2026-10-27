@@ -1,5 +1,5 @@
 /* กกบ. Minutes - local-first meeting report editor */
-if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'lib/pdf.worker.min.js';
 
 const AGENDA_DEFAULTS = [
   'ระเบียบวาระที่ 1 เรื่องที่ประธานฯ แจ้งให้ทราบ',
@@ -379,9 +379,9 @@ async function getOcrWorker(){
   if(!window.Tesseract?.createWorker)throw new Error('ไม่พบตัวอ่าน OCR ในเครื่อง ตรวจสอบไฟล์ lib/ocr');
   if(!ocrWorkerPromise){
     ocrWorkerPromise=window.Tesseract.createWorker('tha',1,{
-      workerPath:appAssetUrl('worker.min.js'),
-      langPath:appAssetUrl('.'),
-      corePath:appAssetUrl('.'),
+      workerPath:appAssetUrl('lib/ocr/worker.min.js'),
+      langPath:appAssetUrl('lib/ocr/lang'),
+      corePath:appAssetUrl('lib/ocr/core'),
       gzip:true,
       logger:reportOcrProgress
     }).then(worker=>(ocrWorker=worker)).catch(error=>{ocrWorkerPromise=null;throw error;});
@@ -420,8 +420,26 @@ async function runOcr(id){
 }
 
 function localTranscriptionUrl(path) {
-  const base=location.protocol==='file:'?LOCAL_SERVER_ORIGIN:location.origin+'/';
-  return new URL(path,base).href;
+  return new URL(path, LOCAL_SERVER_ORIGIN).href;
+}
+
+async function ensureLocalTranscriptionService() {
+  let response;
+  try {
+    response = await fetch(localTranscriptionUrl('/api/health'), {
+      cache: 'no-store',
+      targetAddressSpace: 'local'
+    });
+  } catch {
+    throw new Error('เชื่อมต่อบริการถอดเสียงในเครื่องไม่ได้ กรุณาเปิด start-app.bat ค้างไว้ และเมื่อ Chrome ถามให้อนุญาตการเข้าถึงเครือข่ายในเครื่อง จากนั้นกดถอดเสียงอีกครั้ง');
+  }
+  if (!response.ok) {
+    throw new Error('บริการถอดเสียงในเครื่องตอบกลับผิดพลาด (' + response.status + ') กรุณาปิดแล้วเปิด start-app.bat ใหม่');
+  }
+  const health = await response.json().catch(() => ({}));
+  if (!health.ok) {
+    throw new Error('บริการ Whisper ในเครื่องยังไม่พร้อม กรุณาตรวจสอบหน้าต่าง start-app.bat');
+  }
 }
 
 async function fetchFfmpegAsset(path) {
@@ -437,9 +455,9 @@ async function fetchFfmpegAsset(path) {
 
 function loadFfmpegScript() {
   return (async () => {
-    let sourceUrl = appAssetUrl('ffmpeg.js');
+    let sourceUrl = appAssetUrl('lib/ffmpeg/ffmpeg.js');
     if (location.protocol === 'file:') {
-      const response = await fetchFfmpegAsset('ffmpeg.js');
+      const response = await fetchFfmpegAsset('lib/ffmpeg/ffmpeg.js');
       let source = await response.text();
       const workerLoadPattern = /load=\(\{classWorkerURL:s,\.\.\.r\}=\{\},\{signal:a\}=\{\}\)=>\(this\.#e\|\|\(this\.#e=s\?new Worker\(new URL\(s,"[^"]+"\),\{type:"module"\}\):new Worker\(new URL\(e\.p\+e\.u\(814\),e\.b\),\{type:void 0\}\),this\.#o\(\)\),this\.#i\(\{type:t\.LOAD,data:r\},void 0,a\)\);/;
       const workerLoadPatch = 'load=({workerURL:s,...r}={}, {signal:a}={})=>(this.#e||(this.#e=new Worker(s||new URL(e.p+e.u(814),e.b),{type:"classic"}),this.#o()),this.#i({type:t.LOAD,data:r},void 0,a));';
@@ -480,13 +498,13 @@ async function loadFfmpegBlobAsset(path, type) {
 async function loadFfmpegWasmAsset() {
   let response;
   try {
-    response = await fetchFfmpegAsset('ffmpeg-core.wasm.gz');
+    response = await fetchFfmpegAsset('lib/ffmpeg/ffmpeg-core.wasm.gz');
   } catch {
-    const original = await fetchFfmpegAsset('ffmpeg-core.wasm');
+    const original = await fetchFfmpegAsset('lib/ffmpeg/ffmpeg-core.wasm');
     return original.url;
   }
   if (typeof DecompressionStream !== 'function') {
-    const original = await fetchFfmpegAsset('ffmpeg-core.wasm');
+    const original = await fetchFfmpegAsset('lib/ffmpeg/ffmpeg-core.wasm');
     return original.url;
   }
   const decompressed = response.body.pipeThrough(new DecompressionStream('gzip'));
@@ -510,10 +528,10 @@ async function getFfmpeg() {
       if (!FFmpeg) throw new Error('ไม่พบตัวช่วยประมวลผลเสียง FFmpeg');
       const ffmpeg = new FFmpeg();
       let workerURL;
-      let coreURL = appAssetUrl('ffmpeg-core.js');
+      let coreURL = appAssetUrl('lib/ffmpeg/ffmpeg-core.js');
       const wasmURL = await loadFfmpegWasmAsset();
       if (location.protocol === 'file:') {
-        workerURL = await loadFfmpegBlobAsset('814.ffmpeg.js', 'text/javascript');
+        workerURL = await loadFfmpegBlobAsset('lib/ffmpeg/814.ffmpeg.js', 'text/javascript');
       }
       try {
         await ffmpeg.load({ ...(workerURL ? { workerURL } : {}), coreURL, wasmURL });
@@ -536,7 +554,7 @@ async function transcribeChunkLocally(bytes,entry,part,total) {
   const mode=entry.transcriptionMode||selectedTranscriptionMode();
   entry.status='กำลังถอดเสียง '+(mode==='fast'?'โหมดเร็ว':'โหมดแม่นยำ')+' ช่วง '+part+'/'+total+' · Whisper.cpp CPU…';
   drawFiles();
-  const response=await fetch(localTranscriptionUrl('/api/transcribe-local'),{method:'POST',headers:{'Content-Type':'audio/wav','X-Transcription-Model':mode},body:bytes});
+  const response=await fetch(localTranscriptionUrl('/api/transcribe-local'),{method:'POST',headers:{'Content-Type':'audio/wav','X-Transcription-Model':mode},body:bytes,targetAddressSpace:'local'});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'ถอดเสียงในเครื่องไม่สำเร็จ');
   entry.transcriptionDevice='cpu';
@@ -595,6 +613,7 @@ async function transcribeFile(id,button) {
   file.error='';
   drawFiles();
   try {
+    await ensureLocalTranscriptionService();
     const transcript=await queueLocalAudio(file);
     file.kind='transcript';
     file.text='[ถอดเสียง: '+file.name+']\n'+transcript;
